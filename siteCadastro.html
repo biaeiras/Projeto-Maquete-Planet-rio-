@@ -1,0 +1,64 @@
+<html>
+
+<head>
+  <title>Configurações</title>
+  <link rel="stylesheet" href="siteCadastro.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+</head>
+
+<body>
+  <main class = "pagina-admin"> 
+    <header class = "cabecalho-admin">
+      <h1 class="mb-3">Admin - Museu</h1>
+    </header> 
+
+    <div class="painel-admin">
+
+      <!-- Lado esquerdo -->
+      <section class="area-cadastro">
+        <h2 class="card-header">Cadastrar Atrações</h2>
+    
+        <form class="formulario"  method="POST">
+          <div>
+            <label for="campo-nome">Nome</label>
+            <input id="campo-nome" class="form-control" name="nome" type="text" placeholder="Digite o nome da atração" required>
+          </div>
+            <div>
+            <label for="campo-localizacao">Coordenadas</label>
+            <input id="campo-localizacao" class="form-control" name="localizacao" type="text"  placeholder="Ex.: -22.9068, -43.1729" required>
+          </div>
+      
+          <button type="submit" class="btn btn-primary">Adicionar</button>
+      
+        </form>
+      </section>
+
+      <!-- Lado direito -->
+      <section class = "area-lista"> 
+        <h2>Atrações Cadastradas</h2>
+        <table class = "tabela-atracoes"> 
+          <tr> 
+              <th> Atração</th>
+              <th> Opções</th>
+          </tr>
+          <tr>
+            <td>Teste de Atração</td>
+            <td class="opcoes">
+              <button type = "button" aria-label = "Editar atração"> 
+                <img class= "icone-editar-atracao" src = "img/editar.png"  alt = "Editar Atracao">
+              </button>
+
+              <button type = "button" aria-label = "Excluir atração"> 
+                <img class= "icone-excluir-atracao" src = "img/excluir.png"  alt = "Excluir Atracao">
+              </button>
+            </td> 
+          </tr>
+        </table>
+      </section>
+
+    </div>
+  </main>
+</body>
+
+</html>

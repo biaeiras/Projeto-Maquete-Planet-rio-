@@ -275,6 +275,9 @@
     gap: 10px;
 }
 
+.modal[hidden] {
+    display: none !important;
+}
 
 
 /* Responsividade */

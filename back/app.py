@@ -155,6 +155,52 @@ def excluir_atracao(id):
         }), 500
 
 
+@app.route("/atracoes/<int:id>", methods =["PUT"])
+
+def editar_atracao(id): 
+
+    dados = request.get_json()
+    nome = dados["nome"]
+    coordenada_x = dados["coordenada_x"]
+    coordenada_y = dados["coordenada_y"]
+
+    try: 
+        conexao = conectar_banco()
+        cursor = conexao.cursor()
+
+
+        cursor.execute("""
+                UPDATE atracoes
+                SET nome = %s,
+                    coordenada_x = %s,
+                    coordenada_y = %s
+                WHERE id = %s
+                RETURNING id;
+            """, (nome, coordenada_x, coordenada_y, id))
+
+        atracao_atualizada = cursor.fetchone()
+
+        conexao.commit()
+
+        cursor.close()
+        conexao.close()
+
+        if atracao_atualizada is None:
+            return jsonify({"mensagem": "Atração não encontrada."}), 404
+
+        return jsonify({
+            "id": id,
+            "nome": nome,
+            "coordenada_x": coordenada_x,
+            "coordenada_y": coordenada_y,
+            "mensagem": "Atração atualizada com sucesso!"
+        }), 200
+
+    except Exception as erro:
+        print("Erro ao editar atração:", erro)
+
+        return jsonify({"mensagem": "Erro ao atualizar atração."}), 500
+
 if __name__ == "__main__": 
     testar_conexao()
     app.run(debug = True)

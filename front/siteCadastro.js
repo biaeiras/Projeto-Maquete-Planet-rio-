@@ -16,8 +16,36 @@ const localizacaoEscolhida = document.getElementById("localizacao-escolhida");
 const resumoLocalizacao = document.getElementById("resumo-localizacao");
 
 const formulario = document.getElementById("formulario-atracao")
+const modalEdicao = document.getElementById("modal-edicao"); 
+const botaoFecharModal = document.getElementById("fechar-modal");
+const botaoCancelarEdicao = document.getElementById("cancelar-edicao");
+const formularioEdicao = document.getElementById("formulario-edicao"); 
+
+
+
 let coordenadaX = null;
 let coordenadaY = null;
+
+//EDICAO
+
+const botaoAbrirMapaEdicao = document.getElementById("abrir-mapa-edicao");
+const botaoCancelarMapaEdicao = document.getElementById("cancelar-mapa-edicao");
+const botaoConfirmarMapaEdicao = document.getElementById("confirmar-localizacao-edicao");
+
+const areaMapaEdicao = document.getElementById("area-mapa-edicao");
+const mapaEdicao = document.getElementById("mapa-edicao");
+const marcadorEdicao = document.getElementById("marcador-edicao");
+
+const posicaoEdicao = document.getElementById("posicao-edicao");
+const textoLocalizacaoEdicao = document.getElementById("texto-localizacao-edicao");
+
+const campoXEdicao = document.getElementById("coordenada-x-edicao");
+const campoYEdicao = document.getElementById("coordenada-y-edicao");
+
+// Coordenadas próprias do mapa de edição
+let coordenadaXEdicao = null;
+let coordenadaYEdicao = null;
+let idAtracaoEditando= null; 
 
 //abrir ou fechar o mapa
 botaoabrir.addEventListener("click", () => {
@@ -108,6 +136,49 @@ formulario.addEventListener("submit", async(evento) => {evento.preventDefault();
   }
 })
 
+formularioEdicao.addEventListener("submit", async(evento) => {evento.preventDefault(); 
+
+  const nome = document.getElementById("nome-edicao").value; 
+  const coordenadaX = document.getElementById("coordenada-x-edicao").value; 
+  const coordenadaY = document.getElementById("coordenada-y-edicao").value; 
+
+  const dados = {
+    nome: nome, 
+    coordenada_x: Number(coordenadaX), 
+    coordenada_y: Number(coordenadaY)
+  }; 
+
+  try {
+    const resposta = await fetch(`http://127.0.0.1:5000/atracoes/${idAtracaoEditando}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dados)
+    });
+
+    const resultado = await resposta.json(); 
+
+    if(resposta.ok){
+      alert("Atração atualizada com sucesso!"); 
+      console.log(resultado);
+
+      fecharModalEdicao(); 
+      carregarAtracoes(); 
+    }
+    else{
+      alert(resultado.mensagem);
+    }
+
+
+  } 
+  catch(erro){
+    console.error("Erro na comunicação com a API", erro); 
+    alert("Não foi possível conectar ao servidor");
+  }
+})
+
+
 async function carregarAtracoes() {
 
     const listaAtracoes = document.getElementById("lista-atracoes");
@@ -129,7 +200,7 @@ async function carregarAtracoes() {
                 <td>${atracao.nome}</td>
 
                 <td class="opcoes">
-                    <button type="button" aria-label="Editar atração">
+                    <button type="button" class="btn-editar" aria-label="Editar atração">
                         <img class="icone-editar-atracao" src="img/editar.png" alt="Editar atração">
                     </button>
 
@@ -139,6 +210,24 @@ async function carregarAtracoes() {
                 </td>
             `;
 
+            const botaoEditar = linha.querySelector(".btn-editar");
+
+            botaoEditar.addEventListener("click", () => {
+
+                const modal = document.getElementById("modal-edicao");
+
+                idAtracaoEditando = atracao.id; 
+
+                document.getElementById("nome-edicao").value = atracao.nome;
+
+                document.getElementById("coordenada-x-edicao").value = atracao.coordenada_x;
+                document.getElementById("coordenada-y-edicao").value = atracao.coordenada_y;
+
+                document.getElementById("texto-localizacao-edicao").textContent =
+                    `X: ${atracao.coordenada_x}% | Y: ${atracao.coordenada_y}%`;
+
+                modal.hidden = false;
+            });
 
             const botaoExcluir = linha.querySelector(".btn-excluir");
 
@@ -181,4 +270,55 @@ async function carregarAtracoes() {
     }
 }
 
+
+function fecharModalEdicao(){
+  modalEdicao.hidden = true;
+}
+
+
 carregarAtracoes();
+botaoFecharModal.addEventListener("click", fecharModalEdicao); 
+botaoCancelarEdicao.addEventListener("click", fecharModalEdicao);
+
+//abrir ou fechar o mapa de edicao
+botaoAbrirMapaEdicao.addEventListener("click", () => {
+  areaMapaEdicao.hidden = !areaMapaEdicao.hidden; 
+});
+
+mapaEdicao.addEventListener("click", (evento) => {
+
+    const retangulo = mapaEdicao.getBoundingClientRect();
+
+    coordenadaXEdicao = ((evento.clientX - retangulo.left) / retangulo.width) * 100;
+
+    coordenadaYEdicao = ((evento.clientY - retangulo.top) / retangulo.height) * 100;
+
+    // Mostra o marcador no local clicado
+    marcadorEdicao.style.left = coordenadaXEdicao + "%";
+    marcadorEdicao.style.top = coordenadaYEdicao + "%";
+    marcadorEdicao.style.display = "block";
+
+    posicaoEdicao.textContent = `Ponto escolhido: X = ${coordenadaXEdicao.toFixed(1)}%, Y = ${coordenadaYEdicao.toFixed(1)}%`;
+
+    botaoConfirmarMapaEdicao.disabled = false;
+});
+
+botaoCancelarMapaEdicao.addEventListener("click", () => {
+  areaMapaEdicao.hidden = true; 
+})
+
+botaoConfirmarMapaEdicao.addEventListener("click", () => {
+  if (coordenadaXEdicao  === null || coordenadaYEdicao  === null) {
+    alert("Clique em um ponto do mapa primeiro.");
+    return;
+  }
+
+  // Preenche os campos que serão enviados ao backend
+  campoXEdicao.value = coordenadaXEdicao.toFixed(2);
+  campoYEdicao.value = coordenadaYEdicao.toFixed(2);
+
+ 
+  textoLocalizacaoEdicao.textContent =`Nova localização: X: ${coordenadaXEdicao.toFixed(1)}% | Y: ${coordenadaYEdicao.toFixed(1)}%`;
+
+  areaMapaEdicao.hidden = true;
+});

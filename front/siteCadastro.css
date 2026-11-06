@@ -213,6 +213,70 @@
   display: none;
 }
 
+/* Fundo escuro do modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1000;
+}
+
+/* Conteúdo do modal */
+.conteudo-modal {
+    background-color: white;
+    width: 90%;
+    max-width: 550px;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Cabeçalho */
+.cabecalho-modal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.cabecalho-modal h2 {
+    margin: 0;
+}
+
+#fechar-modal {
+    border: none;
+    background: none;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+/* Formulário */
+#formulario-edicao {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Botões */
+.botoes-modal {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+
+
 /* Responsividade */
 @media (max-width: 800px) {
   .painel-admin {

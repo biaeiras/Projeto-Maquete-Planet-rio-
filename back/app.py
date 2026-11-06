@@ -3,10 +3,12 @@ import psycopg
 
 import os
 from dotenv import load_dotenv
+from flask_cors import CORS
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 def conectar_banco():
     return psycopg.connect(
@@ -77,7 +79,80 @@ def cadastrar_atracao():
             "mensagem": "Erro ao cadastrar atração."
         }), 500
     
-    
+@app.route("/atracoes", methods = ["GET"])
+
+def listar_atracoes():
+    try: 
+        conexao = conectar_banco()
+        
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+            SELECT id, nome, coordenada_x, coordenada_y
+            FROM atracoes
+            ORDER BY id;
+        """)
+
+        atracoes = cursor.fetchall()
+
+        cursor.close()
+
+        conexao.close()
+
+        listar_atracoes = []
+
+        for atracao in atracoes: 
+            listar_atracoes.append({
+                "id": atracao[0], 
+                "nome": atracao[1], 
+                "coordenada_x": float(atracao[2]) if atracao[2] is not None else None,
+                "coordenada_y": float(atracao[3]) if atracao[3] is not None else None
+            })
+
+        return jsonify(listar_atracoes), 200
+
+    except Exception as erro: 
+        print("Erro ao listar atrações", erro)
+
+        return jsonify({
+                    "mensagem": "Erro ao cadastrar atração."
+                }), 500
+            
+@app.route("/atracoes/<int:id>", methods=["DELETE"])
+def excluir_atracao(id):
+
+    try:
+        conexao = conectar_banco()
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+            DELETE FROM atracoes
+            WHERE id = %s
+            RETURNING id;
+        """, (id,))
+
+        atracao_excluida = cursor.fetchone()
+
+        conexao.commit()
+
+        cursor.close()
+        conexao.close()
+
+        if atracao_excluida is None:
+            return jsonify({
+                "mensagem": "Atração não encontrada."
+            }), 404
+
+        return jsonify({
+            "mensagem": "Atração excluída com sucesso!"
+        }), 200
+
+    except Exception as erro:
+        print("Erro ao excluir atração:", erro)
+
+        return jsonify({
+            "mensagem": "Erro ao excluir atração."
+        }), 500
 
 
 if __name__ == "__main__": 

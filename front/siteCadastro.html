@@ -75,25 +75,103 @@
       <!-- Lado direito -->
       <section class = "area-lista"> 
         <h2>Atrações Cadastradas</h2>
-        <table class = "tabela-atracoes"> 
-          <tr> 
-              <th> Atração</th>
-              <th> Opções</th>
-          </tr>
-          <tr>
-            <td>Teste de Atração</td>
-            <td class="opcoes">
-              <button type = "button" aria-label = "Editar atração"> 
-                <img class= "icone-editar-atracao" src = "img/editar.png"  alt = "Editar Atracao">
-              </button>
+        <table class="tabela-atracoes">
+          <thead>
+              <tr>
+                  <th>Atração</th>
+                  <th>Opções</th>
+              </tr>
+          </thead>
 
-              <button type = "button" aria-label = "Excluir atração"> 
-                <img class= "icone-excluir-atracao" src = "img/excluir.png"  alt = "Excluir Atracao">
-              </button>
-            </td> 
-          </tr>
+          <tbody id="lista-atracoes">
+              <!-- As atrações serão inseridas pelo JavaScript -->
+          </tbody>
         </table>
       </section>
+
+            <!-- Modal de edição -->
+      <div class="modal" id="modal-edicao" hidden>
+
+          <div class="conteudo-modal">
+
+              <div class="cabecalho-modal">
+                  <h2>Editar atração</h2>
+
+                  <button type="button" id="fechar-modal">
+                      &times;
+                  </button>
+              </div>
+
+              <form id="formulario-edicao">
+
+                  <div>
+                      <label for="nome-edicao">Nome da atração</label>
+
+                      <input
+                          type="text"
+                          id="nome-edicao"
+                          class="form-control"
+                          required
+                      >
+                  </div>
+
+                  <div class="campo-localizacao">
+                      <label>Localização</label>
+
+                      <p id="texto-localizacao-edicao">
+                          Localização atual da atração
+                      </p>
+
+                      <input type="hidden" id="coordenada-x-edicao">
+                      <input type="hidden" id="coordenada-y-edicao">
+
+                      <button type="button" id="abrir-mapa-edicao">
+                          Alterar localização
+                      </button>
+
+                      <div class="area-mapa" id="area-mapa-edicao" hidden>
+
+                          <p>Clique no novo local da atração</p>
+
+                          <div class="mapa-maquete" id="mapa-edicao">
+                              <img
+                                  src="img/maquete.avif"
+                                  alt="Mapa da maquete do Planetário"
+                              >
+
+                              <div class="marcador" id="marcador-edicao"></div>
+                          </div>
+
+                          <p id="posicao-edicao">
+                              Clique no mapa para escolher a localização
+                          </p>
+
+                          <button type="button" id="confirmar-localizacao-edicao" disabled>
+                              Confirmar localização
+                          </button>
+
+                          <button type="button" id="cancelar-mapa-edicao">
+                              Cancelar
+                          </button>
+
+                      </div>
+                  </div>
+
+                  <div class="botoes-modal">
+                      <button type="button" id="cancelar-edicao">
+                          Cancelar
+                      </button>
+
+                      <button type="submit">
+                          Salvar alterações
+                      </button>
+                  </div>
+
+              </form>
+
+          </div>
+
+      </div>
 
     </div>
   </main>

@@ -5,6 +5,8 @@
   <link rel="stylesheet" href="siteCadastro.css">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta charset="UTF-8">
+
+  <script src = "siteCadastro.js" defer></script>
 </head>
 
 <body>
@@ -14,7 +16,6 @@
     </header> 
 
     <div class="painel-admin">
-
       <!-- Lado esquerdo -->
       <section class="area-cadastro">
         <h2 class="card-header">Cadastrar Atrações</h2>
@@ -24,9 +25,46 @@
             <label for="campo-nome">Nome</label>
             <input id="campo-nome" class="form-control" name="nome" type="text" placeholder="Digite o nome da atração" required>
           </div>
-            <div>
-            <label for="campo-localizacao">Coordenadas</label>
-            <input id="campo-localizacao" class="form-control" name="localizacao" type="text"  placeholder="Ex.: -22.9068, -43.1729" required>
+          <div class = "campo-localizacao">
+            <label for="campo-localizacao">Localização</label>
+
+            <p id = "texto-localizacao"> Nenhuma localização selecionada </p>
+
+            <div id = "localizacao-escolhida" class = "localizacao-escolhida" hidden> 
+              <span> Localização escolhida: </span>
+              <strong id="resumo-localizacao"></strong>
+            </div>
+            
+            <input type = "hidden"  id= "coordenada-x" name = "coordenada_x">
+            <input type = "hidden"  id= "coordenada-y" name = "coordenada_y">
+
+            <button type = "button" id = "abrir-mapa">
+              Abrir  mapa
+            </button>
+
+            <!-- Mapa ao apertar o botão Abrir Mapa -->
+
+            <div class="area-mapa" id = "area-mapa" hidden> 
+              <p>Clique no local da atração</p>
+
+              <div class="mapa-maquete" id = "mapa"> 
+                <img src = "img/maquete.avif" alt = "Mapa da maquete do Planetário"> 
+                <div class = "marcador" id = "marcador"></div>
+              </div>
+                
+              <p id = "posicao"> Clique no mapa para escolher a localização</p>
+              
+              <div class="botoes-mapa"> 
+                <button type = "button"  id = "confirmar-localizacao" disabled> 
+                  Confirmar 
+                </button>
+
+                <button type = "button"  id = "cancelar-mapa"> 
+                  Cancelar 
+                </button>
+              </div>
+            </div>
+        
           </div>
       
           <button type="submit" class="btn btn-primary">Adicionar</button>
@@ -59,6 +97,8 @@
 
     </div>
   </main>
+
+  
 </body>
 
 </html>

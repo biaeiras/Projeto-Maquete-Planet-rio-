@@ -1,4 +1,5 @@
 
+//CADASTRO
 const botaoabrir = document.getElementById("abrir-mapa");
 const botaoCancelar = document.getElementById("cancelar-mapa");
 const botaoConfirmar = document.getElementById("confirmar-localizacao");
@@ -6,6 +7,7 @@ const botaoConfirmar = document.getElementById("confirmar-localizacao");
 const areaMapa = document.getElementById("area-mapa"); 
 const mapa = document.getElementById("mapa"); 
 const marcador = document.getElementById("marcador");
+const marcadoresExistentes = document.getElementById("marcadores-existentes");
 
 const posicao = document.getElementById("posicao");
 const textoLocalizacao = document.getElementById("texto-localizacao");
@@ -42,14 +44,20 @@ const textoLocalizacaoEdicao = document.getElementById("texto-localizacao-edicao
 const campoXEdicao = document.getElementById("coordenada-x-edicao");
 const campoYEdicao = document.getElementById("coordenada-y-edicao");
 
+const marcadoresExistentesEdicao = document.getElementById("marcadores-existentes-edicao");
 // Coordenadas próprias do mapa de edição
 let coordenadaXEdicao = null;
 let coordenadaYEdicao = null;
+
 let idAtracaoEditando= null; 
 
 //abrir ou fechar o mapa
 botaoabrir.addEventListener("click", () => {
     areaMapa.hidden = !areaMapa.hidden; 
+
+    if(!areaMapa.hidden){
+      mostrarMarcadoresExistentes(); 
+    }
 });
 
 mapa.addEventListener("click", (evento) => {
@@ -101,6 +109,27 @@ formulario.addEventListener("submit", async(evento) => {evento.preventDefault();
   const coordenadaX = document.getElementById("coordenada-x").value; 
   const coordenadaY = document.getElementById("coordenada-y").value; 
 
+  //pega a localização das atrações já cadastradas no banco 
+  const respostaAtracoes = await fetch("http://127.0.0.1:5000/atracoes");
+  const atracoesExistentes=  await respostaAtracoes.json(); 
+
+  console.log("Coordenadas escolhidas:", coordenadaX, coordenadaY);
+  console.log("Atrações existentes:", atracoesExistentes);
+
+  if(verificarLocalizacaoOcupada(Number(coordenadaX), Number(coordenadaY), atracoesExistentes)) {
+    alert("Esse local está muito próximo de outra atração. Escolha outro ponto.")
+    return; 
+  }
+
+  console.log(
+    "Local ocupado?",
+    verificarLocalizacaoOcupada(
+        Number(coordenadaX),
+        Number(coordenadaY),
+        atracoesExistentes
+    )
+  );
+
   const dados = {
     nome: nome, 
     coordenada_x: Number(coordenadaX), 
@@ -123,6 +152,8 @@ formulario.addEventListener("submit", async(evento) => {evento.preventDefault();
       console.log(resultado);
 
       formulario.reset(); 
+      mostrarMarcadoresExistentes();
+      
     }
     else{
       alert("Erro ao cadastrar atração.");
@@ -165,6 +196,7 @@ formularioEdicao.addEventListener("submit", async(evento) => {evento.preventDefa
 
       fecharModalEdicao(); 
       carregarAtracoes(); 
+      mostrarMarcadoresExistentes();
     }
     else{
       alert(resultado.mensagem);
@@ -223,8 +255,7 @@ async function carregarAtracoes() {
                 document.getElementById("coordenada-x-edicao").value = atracao.coordenada_x;
                 document.getElementById("coordenada-y-edicao").value = atracao.coordenada_y;
 
-                document.getElementById("texto-localizacao-edicao").textContent =
-                    `X: ${atracao.coordenada_x}% | Y: ${atracao.coordenada_y}%`;
+                document.getElementById("texto-localizacao-edicao").textContent = `X: ${atracao.coordenada_x}% | Y: ${atracao.coordenada_y}%`;
 
                 modal.hidden = false;
             });
@@ -252,6 +283,7 @@ async function carregarAtracoes() {
                     if (resposta.ok) {
                         alert("Atração excluída com sucesso!");
                         carregarAtracoes();
+                        mostrarMarcadoresExistentes(); 
                     } else {
                         alert(resultado.mensagem);
                     }
@@ -283,6 +315,11 @@ botaoCancelarEdicao.addEventListener("click", fecharModalEdicao);
 //abrir ou fechar o mapa de edicao
 botaoAbrirMapaEdicao.addEventListener("click", () => {
   areaMapaEdicao.hidden = !areaMapaEdicao.hidden; 
+
+  if (!areaMapaEdicao.hidden) {
+      mostrarMarcadoresExistentesEdicao();
+  }
+
 });
 
 mapaEdicao.addEventListener("click", (evento) => {
@@ -322,3 +359,76 @@ botaoConfirmarMapaEdicao.addEventListener("click", () => {
 
   areaMapaEdicao.hidden = true;
 });
+
+//Não permitir que outra atração seja cadastrada no mesmo lugar
+
+function verificarLocalizacaoOcupada(x, y, atracoes, idIgnorado = null){
+  const distanciaMinimia = 3; 
+
+  for(const atracao of atracoes){
+
+    //Ignorar a atração atual quando estiver no modo editar 
+
+    if(atracao.id === idIgnorado){
+      continue; 
+    }
+
+    const diferencaX = x - atracao.coordenada_x; 
+    const diferencaY = y - atracao.coordenada_y; 
+
+    //distancia 
+
+    const distancia = Math.sqrt(diferencaX ** 2 + diferencaY **2); 
+
+    if(distancia < distanciaMinimia){
+      return true; 
+    }
+  }
+  return false; 
+}
+
+async function mostrarMarcadoresExistentes(){
+  try{
+    const resposta = await fetch("http://127.0.0.1:5000/atracoes"); 
+    const atracoes = await resposta.json(); 
+
+    marcadoresExistentes.innerHTML = ""; 
+
+    atracoes.forEach((atracao) => {
+      const marcadorVerde = document.createElement("div"); 
+
+      marcadorVerde.classList.add("marcador-existente"); 
+
+      marcadorVerde.style.left = atracao.coordenada_x + "%";
+      marcadorVerde.style.top = atracao.coordenada_y + "%";
+
+      marcadoresExistentes.appendChild(marcadorVerde);
+
+    });
+  }catch (erro) {
+        console.error("Erro ao mostrar marcadores:", erro);
+    }
+}
+
+async function mostrarMarcadoresExistentesEdicao() {
+    try {
+        const resposta = await fetch("http://127.0.0.1:5000/atracoes");
+        const atracoes = await resposta.json();
+
+        marcadoresExistentesEdicao.innerHTML = "";
+
+        atracoes.forEach((atracao) => {
+            const marcadorVerde = document.createElement("div");
+
+            marcadorVerde.classList.add("marcador-existente");
+
+            marcadorVerde.style.left = atracao.coordenada_x + "%";
+            marcadorVerde.style.top = atracao.coordenada_y + "%";
+
+            marcadoresExistentesEdicao.appendChild(marcadorVerde);
+        });
+
+    } catch (erro) {
+        console.error("Erro ao mostrar marcadores no mapa de edição:", erro);
+    }
+}

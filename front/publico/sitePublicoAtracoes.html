@@ -9,5 +9,35 @@
   <script src = "sitePublicoAtracao.js" defer></script>
 </head>
 
+<body>
+  <header>
+     <h1> Conheça nosso Museu</h1>
+     <p>Escolha uma atração para explorar</p>
+  </header>
 
+  <main>
+    <section class="lista-atracoes"> 
+      <h2> Escolha sua próxima atração</h2>
+
+      <div id = "atracoes-container"> 
+        Atrações Aqui
+      </div>
+
+    </section>
+
+    <section id = "detalhes-atracao" hidden> 
+      <h2 id = "nome-atracao"></h2>
+      <p id = "resumo-atracao"></p>
+      <p id="quantidade-obras"></p>
+      <div id = "obras-container"></div>
+
+    
+      <button type = "button" id="botao-enviar"> 
+        Escolher essa atracao
+      </button>
+    
+    </section>
+  </main>
+
+</body>
 </html>

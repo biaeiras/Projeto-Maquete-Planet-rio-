@@ -88,7 +88,7 @@ def listar_atracoes():
         cursor = conexao.cursor()
 
         cursor.execute("""
-            SELECT id, nome, coordenada_x, coordenada_y
+            SELECT id, nome, resumo, link, qtd_obras, coordenada_x, coordenada_y
             FROM atracoes
             ORDER BY id;
         """)
@@ -105,8 +105,11 @@ def listar_atracoes():
             listar_atracoes.append({
                 "id": atracao[0], 
                 "nome": atracao[1], 
-                "coordenada_x": float(atracao[2]) if atracao[2] is not None else None,
-                "coordenada_y": float(atracao[3]) if atracao[3] is not None else None
+                "resumo": atracao[2], 
+                "link" : atracao[3], 
+                "qtd_obras": atracao[4],
+                "coordenada_x": float(atracao[5]) if atracao[5] is not None else None,
+                "coordenada_y": float(atracao[6]) if atracao[6] is not None else None
             })
 
         return jsonify(listar_atracoes), 200

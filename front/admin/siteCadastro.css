@@ -27,6 +27,13 @@ body {
     margin-bottom: 25px;
 }
 
+.botoes-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+}
+
 .cabecalho-admin h1 {
     font-size: 2rem;
     font-weight: 600;
@@ -63,7 +70,6 @@ body {
 #botao-configurar-mapa:hover {
     background-color: #f0f5fb;
 }
-
 
 .painel-admin {
     display: grid;

@@ -69,6 +69,13 @@ def cadastrar_atracao():
 
         cursor = conexao.cursor()
 
+        cursor.execute("SELECT id FROM atracoes WHERE LOWER(nome) = LOWER(%s)", (nome,))
+
+        if cursor.fetchone():
+            return jsonify({
+                "mensagem": "Já existe uma atração cadastrada com esse nome."
+            }), 400
+            
         cursor.execute("""
             INSERT INTO atracoes (nome, coordenada_x, coordenada_y)
             VALUES (%s, %s, %s)
@@ -135,9 +142,7 @@ def listar_atracoes():
     except Exception as erro: 
         print("Erro ao listar atrações", erro)
 
-        return jsonify({
-                    "mensagem": "Erro ao cadastrar atração."
-                }), 500
+        return jsonify({"mensagem": "Erro ao cadastrar atração." }), 500
             
 @app.route("/atracoes/<int:id>", methods=["DELETE"])
 def excluir_atracao(id):

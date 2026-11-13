@@ -2,12 +2,11 @@
 CREATE TABLE IF NOT EXISTS atracoes (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    resumo TEXT(150),
-    link VARCHAR(255), 
-    qtd_obras INTEGER(7), 
+    resumo TEXT,
+    link TEXT,
+    qtd_obras INTEGER DEFAULT 7,
     coordenada_x DECIMAL(5,2),
     coordenada_y DECIMAL(5,2)
-
 );
 
 CREATE TABLE usuarios_site_atracoes (

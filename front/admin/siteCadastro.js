@@ -163,11 +163,12 @@ formulario.addEventListener("submit", async(evento) => {evento.preventDefault();
       console.log(resultado);
 
       formulario.reset(); 
+      carregarAtracoes();
       mostrarMarcadoresExistentes();
       
     }
     else{
-      alert("Erro ao cadastrar atração.");
+      alert(resultado.mensagem);
     }
 
 
@@ -231,9 +232,6 @@ arquivoMapa.addEventListener("change", ()=>{
     } else {
         botaoSalvarMapa.disabled = true;
     }
-
-  console.log("Arquivo selecionado:", arquivo);
-  console.log("URL da imagem:", urlImagem);
 
 });
 

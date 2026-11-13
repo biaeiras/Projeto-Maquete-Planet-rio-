@@ -10,11 +10,19 @@ CREATE TABLE IF NOT EXISTS atracoes (
 
 );
 
--- Tabela de pessoas
-CREATE TABLE IF NOT EXISTS pessoas (
+CREATE TABLE usuarios_site_atracoes (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    uid_rfid VARCHAR(50) UNIQUE
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    tipo VARCHAR(30) NOT NULL DEFAULT 'administrador'
 );
+
+-- -- Tabela de pessoas
+-- CREATE TABLE IF NOT EXISTS pessoas (
+--     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+--     uid_rfid VARCHAR(50) UNIQUE
+-- );
 
 -- -- Tabela de visitas
 -- CREATE TABLE IF NOT EXISTS visitas (

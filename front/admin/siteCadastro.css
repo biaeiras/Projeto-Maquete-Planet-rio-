@@ -13,7 +13,18 @@
 
 /* Cabeçalho */
 .cabecalho-admin {
-  margin-bottom: 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#botao-sair {
+    padding: 10px 20px;
+    background-color: #245a9b;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
 }
 
 .cabecalho-admin h1 {

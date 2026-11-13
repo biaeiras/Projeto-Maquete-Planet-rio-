@@ -23,7 +23,7 @@ const botaoFecharModal = document.getElementById("fechar-modal");
 const botaoCancelarEdicao = document.getElementById("cancelar-edicao");
 const formularioEdicao = document.getElementById("formulario-edicao"); 
 
-
+const botaoSair = document.getElementById("botao-sair"); 
 
 let coordenadaX = null;
 let coordenadaY = null;
@@ -359,6 +359,12 @@ botaoConfirmarMapaEdicao.addEventListener("click", () => {
 
   areaMapaEdicao.hidden = true;
 });
+
+botaoSair.addEventListener("click", () => {
+  window.location.href= "/logout"; 
+})
+
+
 
 //Não permitir que outra atração seja cadastrada no mesmo lugar
 

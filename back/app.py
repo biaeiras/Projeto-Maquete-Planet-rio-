@@ -1,13 +1,24 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session, send_from_directory, redirect
 import psycopg 
 
 import os
 from dotenv import load_dotenv
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
+from pathlib import Path
 
 load_dotenv()
 
 app = Flask(__name__)
+
+CAMINHO_FRONT = Path(__file__).parent.parent / "front"
+
+CAMINHO_ADMIN = CAMINHO_FRONT / "admin"
+
+CAMINHO_PUBLICO = CAMINHO_FRONT / "publico"
+
+app.secret_key = os.getenv("SECRET_KEY") 
 CORS(app)
 
 def conectar_banco():
@@ -38,6 +49,12 @@ def inicio():
 
 @app.route("/atracoes", methods = ["POST"])
 def cadastrar_atracao(): 
+
+    if "usuario_id" not in session:
+        return jsonify({
+            "mensagem": "Faça login para continuar."
+    }), 401
+
 
     dados = request.get_json()
 
@@ -80,7 +97,6 @@ def cadastrar_atracao():
         }), 500
     
 @app.route("/atracoes", methods = ["GET"])
-
 def listar_atracoes():
     try: 
         conexao = conectar_banco()
@@ -124,6 +140,11 @@ def listar_atracoes():
 @app.route("/atracoes/<int:id>", methods=["DELETE"])
 def excluir_atracao(id):
 
+    if "usuario_id" not in session:
+            return jsonify({
+                "mensagem": "Faça login para continuar."
+    }), 401
+
     try:
         conexao = conectar_banco()
         cursor = conexao.cursor()
@@ -161,6 +182,11 @@ def excluir_atracao(id):
 @app.route("/atracoes/<int:id>", methods =["PUT"])
 
 def editar_atracao(id): 
+
+    if "usuario_id" not in session:
+            return jsonify({
+                "mensagem": "Faça login para continuar."
+    }), 401
 
     dados = request.get_json()
     nome = dados["nome"]
@@ -204,6 +230,114 @@ def editar_atracao(id):
 
         return jsonify({"mensagem": "Erro ao atualizar atração."}), 500
 
+def criar_usuário_admin(): 
+    conexao = conectar_banco(); 
+    cursor = conexao.cursor(); 
+
+    nome = "Admin"
+    email = "admin@museu.com"
+    senha = "Museu123"
+
+    senha_hash = generate_password_hash(senha); 
+
+
+    cursor.execute("""
+        INSERT INTO usuarios_site_atracoes (nome, email, senha)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (email) DO NOTHING;
+    """, (nome, email, senha_hash))
+
+    conexao.commit()
+    cursor.close()
+    conexao.close()
+
+    print("Usuário administrador criado ou já existente!")
+
+@app.route("/admin/login")
+def pagina_login(): 
+    return send_from_directory(CAMINHO_ADMIN, "siteLogin.html")
+
+@app.route("/admin/cadastro")
+def pagina_cadastro(): 
+
+    if "usuario_id" not in session:
+        return redirect("/admin/login")
+
+    return send_from_directory(CAMINHO_ADMIN, "siteCadastro.html")
+
+@app.route("/admin/<path:arquivo>")
+def arquivos_admin(arquivo):
+    return send_from_directory(CAMINHO_ADMIN, arquivo)
+
+@app.route("/logout")
+def logout():
+    session.clear();
+    return redirect("/admin/login")
+
+
+@app.route("/login", methods = ["POST"])
+def login():
+
+    dados = request.get_json()
+
+    email = dados.get("email")
+    senha = dados.get("senha")
+
+
+    try: 
+        conexao = conectar_banco()
+        
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+            SELECT id, nome, email, senha
+            FROM usuarios_site_atracoes
+            WHERE email = %s;
+        """, (email,))
+
+        usuario = cursor.fetchone()
+
+        cursor.close()
+
+        conexao.close()
+
+        if usuario is None: 
+            return jsonify({"mensagem": "Email ou senha incorretos"}), 401
+
+
+        senha_hash = usuario[3]; 
+
+        if not check_password_hash(senha_hash, senha): 
+            #401 - autenticação inválida 
+            return jsonify({"mensagem": "Email ou senha incorreta"}), 401
+
+        #guardando na sessão quem está conectado para não acessar diretamente outras telas sem passsar pelo login
+
+        session["usuario_id"] = usuario[0]; 
+        session["usuario_nome"] = usuario[1]; 
+
+
+        return jsonify({
+            "mensagem": "Login realizado com sucesso!",
+            "usuario": {
+                "id": usuario[0],
+                "nome": usuario[1],
+                "email": usuario[2]
+            }
+        }), 200
+
+
+    except Exception as erro: 
+        print("Erro ao realizar login", erro)
+
+        return jsonify({
+                    "mensagem": "Erro ao realizar login"
+                }), 500
+            
+
 if __name__ == "__main__": 
     testar_conexao()
+    criar_usuário_admin()
     app.run(debug = True)
+
+

@@ -12,8 +12,6 @@ body {
     color: #263445;
 }
 
-
-
 .pagina-admin {
     width: 100%;
     min-height: 100vh;
@@ -51,9 +49,21 @@ body {
     background-color: #194778;
 }
 
-/* =====================================
-   4. ORGANIZAÇÃO DOS PAINÉIS
-===================================== */
+#botao-configurar-mapa {
+    padding: 10px 20px;
+    background-color: white;
+    color: #245a9b;
+    border: 1px solid #245a9b;
+    border-radius: 7px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#botao-configurar-mapa:hover {
+    background-color: #f0f5fb;
+}
+
 
 .painel-admin {
     display: grid;
@@ -88,9 +98,6 @@ body {
     border-bottom: 1px solid #e5e9ef;
 }
 
-/* =====================================
-   6. FORMULÁRIO DE CADASTRO
-===================================== */
 
 .formulario {
     display: flex;
@@ -120,9 +127,6 @@ body {
     box-shadow: 0 0 0 3px rgba(36, 90, 155, 0.12);
 }
 
-/* =====================================
-   7. BOTÕES DO FORMULÁRIO
-===================================== */
 
 .formulario > button {
     width: 100%;
@@ -139,10 +143,6 @@ body {
 .formulario > button:hover {
     background-color: #194778;
 }
-
-/* =====================================
-   8. LOCALIZAÇÃO
-===================================== */
 
 .campo-localizacao {
     display: flex;
@@ -377,6 +377,16 @@ body {
 .botoes-modal button:hover,
 .botoes-mapa button:hover:not(:disabled) {
     background-color: #194778;
+}
+
+#previsualizacao-mapa {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    max-height: 300px;
+    object-fit: contain;
+    margin: 15px auto;
+    border-radius: 8px;
 }
 
 

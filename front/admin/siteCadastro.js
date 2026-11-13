@@ -51,6 +51,17 @@ let coordenadaYEdicao = null;
 
 let idAtracaoEditando= null; 
 
+//MODAL CONFIGURAÇÃO DO MAPA
+
+const modalConfigurarMapa = document.getElementById("modal-configurar-mapa"); 
+const botaoConfigurarMapa = document.getElementById("botao-configurar-mapa"); 
+const botaoFecharMapa= document.getElementById("fechar-modal-mapa"); 
+const botaoCancelarMapa = document.getElementById("cancelar-mapa-config");
+const arquivoMapa = document.getElementById("arquivo-mapa"); 
+const preVisualizacaoMapa = document.getElementById("previsualizacao-mapa"); 
+const botaoSalvarMapa = document.getElementById("salvar-mapa"); 
+
+
 //abrir ou fechar o mapa
 botaoabrir.addEventListener("click", () => {
     areaMapa.hidden = !areaMapa.hidden; 
@@ -210,6 +221,22 @@ formularioEdicao.addEventListener("submit", async(evento) => {evento.preventDefa
   }
 })
 
+arquivoMapa.addEventListener("change", ()=>{
+  const arquivo = arquivoMapa.files[0];
+  if (arquivo) {
+        const urlImagem = URL.createObjectURL(arquivo);
+
+        preVisualizacaoMapa.src = urlImagem;
+        botaoSalvarMapa.disabled = false;
+    } else {
+        botaoSalvarMapa.disabled = true;
+    }
+
+  console.log("Arquivo selecionado:", arquivo);
+  console.log("URL da imagem:", urlImagem);
+
+});
+
 
 async function carregarAtracoes() {
 
@@ -364,6 +391,17 @@ botaoSair.addEventListener("click", () => {
   window.location.href= "/logout"; 
 })
 
+botaoConfigurarMapa.addEventListener("click", () => {
+    modalConfigurarMapa.hidden = false;
+});
+
+botaoFecharMapa.addEventListener("click", () => {
+    modalConfigurarMapa.hidden = true;
+});
+
+botaoCancelarMapa.addEventListener("click", () => {
+    modalConfigurarMapa.hidden = true;
+});
 
 
 //Não permitir que outra atração seja cadastrada no mesmo lugar
@@ -438,3 +476,45 @@ async function mostrarMarcadoresExistentesEdicao() {
         console.error("Erro ao mostrar marcadores no mapa de edição:", erro);
     }
 }
+
+botaoSalvarMapa.addEventListener("click", async () => {
+    const arquivo = arquivoMapa.files[0];
+
+    if (!arquivo) {
+        alert("Selecione uma imagem primeiro.");
+        return;
+    }
+
+    const dados = new FormData();
+    dados.append("imagem", arquivo);
+
+    try {
+        const resposta = await fetch("/mapa", {
+            method: "POST",
+            body: dados
+        });
+
+        const resultado = await resposta.json();
+
+        if (resposta.ok) {
+            alert("Mapa atualizado com sucesso!");
+
+            modalConfigurarMapa.hidden = true;
+
+            // Atualiza as imagens dos dois mapas
+            document.querySelectorAll("#mapa img, #mapa-edicao img").forEach(imagem => {
+                imagem.src = "/mapa-atual?t=" + Date.now();
+            });
+
+            arquivoMapa.value = "";
+            botaoSalvarMapa.disabled = true;
+
+        } else {
+            alert(resultado.mensagem);
+        }
+
+    } catch (erro) {
+        console.error("Erro ao salvar mapa:", erro);
+        alert("Não foi possível salvar o mapa.");
+    }
+});

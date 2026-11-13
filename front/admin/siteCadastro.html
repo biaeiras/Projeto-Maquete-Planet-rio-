@@ -14,6 +14,10 @@
     <header class = "cabecalho-admin">
       <h1 class="mb-3">Admin - Museu</h1>
 
+      <button type="button" id="botao-configurar-mapa">
+        Configurar mapa
+      </button>
+
       <button type="button" id="botao-sair">
         Sair
       </button>
@@ -59,7 +63,7 @@
               <p>Clique no local da atração</p>
 
               <div class="mapa-maquete" id = "mapa"> 
-                <img src = "img/maquete.avif" alt = "Mapa da maquete do Planetário"> 
+                <img src="/mapa-atual" alt="Mapa da maquete do Planetário">
                 
                 <div id = "marcadores-existentes"></div>
                 
@@ -147,10 +151,7 @@
                           <p>Clique no novo local da atração</p>
 
                           <div class="mapa-maquete" id="mapa-edicao">
-                              <img
-                                  src="img/maquete.avif"
-                                  alt="Mapa da maquete do Planetário"
-                              >
+                              <img src="/mapa-atual" alt="Mapa da maquete do Planetário">
 
                               <div id="marcadores-existentes-edicao"></div>
 
@@ -190,6 +191,29 @@
 
     </div>
   </main>
+
+   <!-- Modal de configuração do mapa -->
+    <div class="modal" id="modal-configurar-mapa" hidden>
+    <div class="conteudo-modal">
+        <div class="cabecalho-modal">
+            <h2>Configurar mapa da maquete</h2>
+            <button type="button" id="fechar-modal-mapa">&times;</button>
+        </div>
+
+        <p>Selecione uma nova imagem para o mapa da maquete:</p>
+
+        <img id="previsualizacao-mapa"src="img/maquete.avif"alt="Pré-visualização do mapa">
+
+        <label for="arquivo-mapa">Escolher imagem</label>
+        <input type="file" id="arquivo-mapa" accept="image/*">
+
+        <div class="botoes-modal">
+            <button type="button" id="cancelar-mapa-config">Cancelar</button>
+            <button type="button" id="salvar-mapa" disabled>Salvar mapa</button>
+        </div>
+    </div>
+</div>
+
 
   
 </body>

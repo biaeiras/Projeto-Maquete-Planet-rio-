@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
+
 from pathlib import Path
 
 load_dotenv()
@@ -330,9 +332,49 @@ def login():
     except Exception as erro: 
         print("Erro ao realizar login", erro)
 
-        return jsonify({
-                    "mensagem": "Erro ao realizar login"
-                }), 500
+        return jsonify({ "mensagem": "Erro ao realizar login"}), 500
+
+
+@app.route("/mapa", methods=["POST"])
+def salvar_mapa():
+    if "usuario_id" not in session:
+        return jsonify({"mensagem": "Faça login para continuar."}), 401
+
+    arquivo = request.files.get("imagem")
+
+    if not arquivo or arquivo.filename == "":
+        return jsonify({"mensagem": "Nenhuma imagem foi selecionada."}), 400
+
+    extensao = arquivo.filename.rsplit(".", 1)[-1].lower()
+
+    extensoes_permitidas = { "jpg", "jpeg"}
+
+    if extensao not in extensoes_permitidas:
+        return jsonify({"mensagem": "Formato de imagem não permitido."}), 400
+
+    nome_arquivo = secure_filename(f"mapa_atual.{extensao}")
+
+    pasta_imagens = CAMINHO_ADMIN / "img"
+    pasta_imagens.mkdir(parents=True, exist_ok=True)
+
+    arquivo.save(pasta_imagens / nome_arquivo)
+
+    caminho_configuracao = Path(__file__).parent / "mapa_atual.txt"
+    caminho_configuracao.write_text(nome_arquivo, encoding="utf-8")
+
+    return jsonify({"mensagem": "Mapa salvo com sucesso!"}), 200
+
+
+@app.route("/mapa-atual", methods=["GET"])
+def obter_mapa_atual():
+    caminho_configuracao = Path(__file__).parent / "mapa_atual.txt"
+
+    if caminho_configuracao.exists():
+        nome_arquivo = caminho_configuracao.read_text(encoding="utf-8").strip()
+    else:
+        nome_arquivo = "maquete.avif"
+
+    return send_from_directory(CAMINHO_ADMIN / "img", nome_arquivo)
             
 
 if __name__ == "__main__": 

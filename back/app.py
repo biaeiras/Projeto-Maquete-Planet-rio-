@@ -20,6 +20,8 @@ CAMINHO_ADMIN = CAMINHO_FRONT / "admin"
 
 CAMINHO_PUBLICO = CAMINHO_FRONT / "publico"
 
+#verifica se o cookie da sessão é legítimo 
+#o cookie guarda os dados da sessão 
 app.secret_key = os.getenv("SECRET_KEY") 
 CORS(app)
 
@@ -306,6 +308,8 @@ def login():
 
     try: 
         conexao = conectar_banco()
+
+        #o cursor permite enviar comandos pela a conexão com o banco 
         
         cursor = conexao.cursor()
 
@@ -331,7 +335,7 @@ def login():
             #401 - autenticação inválida 
             return jsonify({"mensagem": "Email ou senha incorreta"}), 401
 
-        #guardando na sessão quem está conectado para não acessar diretamente outras telas sem passsar pelo login
+        #guardando na sessão quem está conectado para não acessar diretamente outras telas sem passar pelo login
 
         session["usuario_id"] = usuario[0]; 
         session["usuario_nome"] = usuario[1]; 

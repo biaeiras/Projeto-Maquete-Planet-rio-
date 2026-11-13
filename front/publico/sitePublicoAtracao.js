@@ -83,6 +83,19 @@ async function carregarAtracoes(){
             botaoEscolher.textContent = "Escolher atração"; 
             botaoEscolher.classList.add("botao-escolher"); 
 
+            botaoEscolher.addEventListener("click", () => {
+
+                atracaoSelecionada = {
+                    id: atracao.id,
+                    nome: atracao.nome
+                };
+
+                alert(`Você escolheu a atração: ${atracaoSelecionada.nome}`);
+
+                console.log("Atração selecionada:", atracaoSelecionada);
+
+            });
+
             // colocando os dados no card
             
             conteudo.appendChild(titulo); 

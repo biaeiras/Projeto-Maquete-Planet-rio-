@@ -9,8 +9,16 @@ const obrasContainer = document.getElementById("obras-container");
 
 const botaoEnviar = document.getElementById("botao-enviar"); 
 
+const modalDetalhes = document.getElementById("modal-detalhes");
+const botaoFecharDetalhes = document.getElementById("fechar-detalhes");
+
+
 let atracaoSelecionada = null; 
 
+
+botaoFecharDetalhes.addEventListener("click", () => {
+    modalDetalhes.hidden = true;
+});
 
 //Buscando no banco as atracoes 
 
@@ -30,10 +38,22 @@ async function carregarAtracoes(){
             const card = document.createElement("div"); 
             card.classList.add("card-atracao"); 
 
-            //Conteudo do card 
+    
+            // Imagem da atração
+            const imagem = document.createElement("img");
+
+            imagem.src = atracao.link_imagem || "/publico/img/semImagem.jpg";
+
+            imagem.alt = atracao.link_imagem? atracao.nome  : "Imagem não cadastrada";
+
+            card.appendChild(imagem);
+
+             //Conteudo do card 
 
             const conteudo = document.createElement("div");
             conteudo.classList.add("card-conteudo");  
+
+
 
             const titulo = document.createElement("h3"); 
             titulo.textContent = atracao.nome; 
@@ -56,7 +76,7 @@ async function carregarAtracoes(){
 
             botaoDetalhes.addEventListener("click", () => {
                 //Abrir modal com os detalhes da obra
-                //mostrarDetalhesAtracao(atracao); 
+                mostrarDetalhesAtracao(atracao); 
             });
 
             const botaoEscolher = document.createElement("button");
@@ -88,6 +108,24 @@ async function carregarAtracoes(){
 
     }
 
+}
+
+function mostrarDetalhesAtracao(atracao) {
+
+    const modal = document.getElementById("modal-detalhes");
+
+    const imagem = document.getElementById("imagem-detalhes");
+    const titulo = document.getElementById("titulo-detalhes");
+    const resumo = document.getElementById("resumo-detalhes");
+
+    imagem.src = atracao.link_imagem || "/publico/img/imagem-indisponivel.jpg";
+    imagem.alt = atracao.nome;
+
+    titulo.textContent = atracao.nome;
+
+    resumo.textContent = atracao.resumo || "Conheça essa atração do nosso museu!";
+
+    modal.hidden = false;
 }
 
 

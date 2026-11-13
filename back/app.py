@@ -113,7 +113,7 @@ def listar_atracoes():
         cursor = conexao.cursor()
 
         cursor.execute("""
-            SELECT id, nome, resumo, link, qtd_obras, coordenada_x, coordenada_y
+            SELECT id, nome, resumo, link, qtd_obras, coordenada_x, coordenada_y, link_imagem
             FROM atracoes
             ORDER BY id;
         """)
@@ -134,7 +134,8 @@ def listar_atracoes():
                 "link" : atracao[3], 
                 "qtd_obras": atracao[4],
                 "coordenada_x": float(atracao[5]) if atracao[5] is not None else None,
-                "coordenada_y": float(atracao[6]) if atracao[6] is not None else None
+                "coordenada_y": float(atracao[6]) if atracao[6] is not None else None, 
+                "link_imagem": atracao[7]
             })
 
         return jsonify(listar_atracoes), 200
@@ -260,9 +261,21 @@ def criar_usuário_admin():
 
     print("Usuário administrador criado ou já existente!")
 
+
+"""ROTAS para os sites """
+
+@app.route("/publico")
+def pagina_publica():
+    return send_from_directory(CAMINHO_PUBLICO, "sitePublicoAtracoes.html")
+
+@app.route("/publico/<path:arquivo>")
+def arquivos_publicos(arquivo):
+    return send_from_directory(CAMINHO_PUBLICO, arquivo)
+
 @app.route("/admin/login")
 def pagina_login(): 
     return send_from_directory(CAMINHO_ADMIN, "siteLogin.html")
+
 
 @app.route("/admin/cadastro")
 def pagina_cadastro(): 

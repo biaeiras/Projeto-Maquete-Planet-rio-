@@ -17,6 +17,13 @@ CREATE TABLE usuarios_site_atracoes (
     tipo VARCHAR(30) NOT NULL DEFAULT 'administrador'
 );
 
+ALTER TABLE atracoes
+ADD COLUMN link_imagem TEXT;
+
+UPDATE atracoes
+SET link_imagem = 'https://www.fcvbrj.org.br/Midia/Fotos/Imagem-da-Nebulosa-da-Helice-projetada-no-Planetario-Supernova-da-ESO(0001).png'
+WHERE id = 1;
+
 -- -- Tabela de pessoas
 -- CREATE TABLE IF NOT EXISTS pessoas (
 --     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

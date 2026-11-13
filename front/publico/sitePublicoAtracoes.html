@@ -2,17 +2,16 @@
 
 <head>
   <title>Atrações</title>
-  <link rel="stylesheet" href="sitePublicoAtracoes.css">
+  <link rel="stylesheet" href="/publico/sitePublicoAtracoes.css">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta charset="UTF-8">
 
-  <script src = "sitePublicoAtracao.js" defer></script>
+  <script src = "/publico/sitePublicoAtracao.js" defer></script>
 </head>
 
 <body>
   <header>
      <h1> Conheça nosso Museu</h1>
-     <p>Escolha uma atração para explorar</p>
   </header>
 
   <main>
@@ -38,6 +37,37 @@
     
     </section>
   </main>
+
+    <!-- Modal de detalhes da atração -->
+  <div class="modal-detalhes" id="modal-detalhes" hidden>
+
+      <div class="conteudo-modal-detalhes">
+
+          <button type="button" id="fechar-detalhes" class="fechar-detalhes">
+              &times;
+          </button>
+
+          <img id="imagem-detalhes" src="" alt="Imagem da atração">
+
+          <div class="informacoes-detalhes">
+
+              <h2 id="titulo-detalhes"></h2>
+
+              <p id="resumo-detalhes"></p>
+
+              <div class="informacoes-obras">
+                  <h3>Obras desta atração</h3>
+
+                  <div id="lista-obras">
+                      <p>As informações das obras estarão disponíveis em breve.</p>
+                  </div>
+              </div>
+
+          </div>
+
+      </div>
+
+  </div>
 
 </body>
 </html>
